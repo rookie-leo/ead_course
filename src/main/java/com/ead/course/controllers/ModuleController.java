@@ -28,7 +28,7 @@ public class ModuleController {
             @PathVariable(value = "courseId") UUID courseId,
             @RequestBody @Valid ModuleRecordDto moduleRecordDto
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(
+        return ResponseEntity.status(HttpStatus.CREATED).body(
                 moduleService.save(moduleRecordDto, courseService.findById(courseId).get())
         );
     }

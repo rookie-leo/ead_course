@@ -28,18 +28,6 @@ public class ModuleServiceImpl implements ModuleService {
         this.lessonRepository = lessonRepository;
     }
 
-    @Transactional
-    @Override
-    public void delete(ModuleModel moduleModel) {
-        List<LessonModel> lessons = lessonRepository.findAllLessonsIntoModule(moduleModel.getModuleId());
-
-        if (!lessons.isEmpty()) {
-            lessonRepository.deleteAll(lessons);
-        }
-
-        moduleRepository.delete(moduleModel);
-    }
-
     @Override
     public ModuleModel save(ModuleRecordDto moduleRecordDto, CourseModel courseModel) {
         var moduleModel = new ModuleModel();
@@ -64,6 +52,27 @@ public class ModuleServiceImpl implements ModuleService {
         }
 
         return moduleModelOptional;
+    }
+
+    @Override
+    public Optional<ModuleModel> findById(UUID moduleId) {
+        var moduleModelOptional = moduleRepository.findById(moduleId);
+
+        if (moduleModelOptional.isEmpty()) throw new RuntimeException("Module not found!");
+
+        return moduleModelOptional;
+    }
+
+    @Transactional
+    @Override
+    public void delete(ModuleModel moduleModel) {
+        List<LessonModel> lessons = lessonRepository.findAllLessonsIntoModule(moduleModel.getModuleId());
+
+        if (!lessons.isEmpty()) {
+            lessonRepository.deleteAll(lessons);
+        }
+
+        moduleRepository.delete(moduleModel);
     }
 
     @Override
