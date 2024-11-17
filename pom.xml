@@ -29,6 +29,7 @@
     <properties>
         <java.version>21</java.version>
         <lombok.version>1.18.34</lombok.version>
+        <specification.version>3.1.0</specification.version>
     </properties>
     <dependencies>
         <dependency>
@@ -57,6 +58,13 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/net.kaczmarzyk/specification-arg-resolver -->
+        <dependency>
+            <groupId>net.kaczmarzyk</groupId>
+            <artifactId>specification-arg-resolver</artifactId>
+            <version>${specification.version}</version>
         </dependency>
 
         <dependency>
