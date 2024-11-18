@@ -31,7 +31,7 @@ public class ModuleModel implements Serializable {
     private String description;
 
     @Column(nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime creationDate;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
