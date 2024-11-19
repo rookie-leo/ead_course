@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @Log4j2
 @RestController
 @RequestMapping("/courses")
@@ -40,7 +43,15 @@ public class CourseCountroller {
     public ResponseEntity<Page<CourseModel>> getAllCourses(
             SpecificationTemplate.CourseSpec spec, Pageable pageable
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(courseService.findAll(spec, pageable));
+        Page<CourseModel> courseModelPage = courseService.findAll(spec, pageable);
+
+        if (!courseModelPage.isEmpty()) {
+            courseModelPage.forEach(course ->
+                    course.add(linkTo(methodOn(CourseCountroller.class).getOneCourse(course.getCourseId())).withSelfRel())
+            );
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(courseModelPage);
     }
 
     @GetMapping("/{courseId}")

@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @Log4j2
 @RestController
 public class LessonController {
@@ -44,9 +47,13 @@ public class LessonController {
             SpecificationTemplate.LessonSpec spec,
             Pageable pageable
             ) {
-        return ResponseEntity.status(HttpStatus.OK).body(
-                lessonService.findAllLessonsIntoModule(SpecificationTemplate.lessonModuleId(moduleId).and(spec), pageable)
-        );
+        Page<LessonModel> lessonModelPage = lessonService.findAllLessonsIntoModule(SpecificationTemplate.lessonModuleId(moduleId).and(spec), pageable);
+        if (!lessonModelPage.isEmpty()) {
+            lessonModelPage.forEach(lesson ->
+                    lesson.add(linkTo(methodOn(LessonController.class).getOneLesson(moduleId, lesson.getLessonId())).withSelfRel())
+                    );
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(lessonModelPage);
     }
 
     @GetMapping("/modules/{moduleId}/lessons/{lessonId}")
