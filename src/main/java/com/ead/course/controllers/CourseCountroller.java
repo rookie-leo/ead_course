@@ -5,6 +5,7 @@ import com.ead.course.models.CourseModel;
 import com.ead.course.services.CourseService;
 import com.ead.course.specifications.SpecificationTemplate;
 import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Log4j2
 @RestController
 @RequestMapping("/courses")
 public class CourseCountroller {
@@ -57,5 +59,15 @@ public class CourseCountroller {
         return ResponseEntity.status(HttpStatus.OK).body(courseService.update(
                 courseRecordDto, courseService.findById(courseId).get()
         ));
+    }
+
+    @GetMapping("/logs")
+    public String index() {
+        log.trace("TRACE");
+        log.debug("DEBUG");
+        log.info("INFO");
+        log.warn("WARN");
+        log.error("ERROR");
+        return "Logging Spring Boot...";
     }
 }
