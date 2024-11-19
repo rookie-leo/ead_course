@@ -27,8 +27,11 @@ public class CourseCountroller {
 
     @PostMapping
     public ResponseEntity<Object> saveCourse(@RequestBody @Valid CourseRecordDto courseRecordDto) {
-        if (courseService.existsByName(courseRecordDto.name()))
+        log.debug("POST saveCourse courseRecordDto: {}", courseRecordDto);
+        if (courseService.existsByName(courseRecordDto.name())) {
+            log.warn("Course Name is Already Taken: {}", courseRecordDto.name());
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Course Name is Already Taken!");
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(courseService.save(courseRecordDto));
     }
@@ -47,6 +50,7 @@ public class CourseCountroller {
 
     @DeleteMapping("/{courseId}")
     public ResponseEntity<Object> deleteCourse(@PathVariable("courseId") UUID courseId) {
+        log.debug("DELETE deleteCourse courseId: {}", courseId);
         courseService.delete(courseService.findById(courseId).get());
         return ResponseEntity.status(HttpStatus.OK).body("Course deleted successfully");
     }
@@ -56,6 +60,7 @@ public class CourseCountroller {
             @PathVariable("courseId") UUID courseId,
             @RequestBody @Valid CourseRecordDto courseRecordDto
     ) {
+        log.debug("PUT updateCourse courseRecordDto: {}", courseRecordDto);
         return ResponseEntity.status(HttpStatus.OK).body(courseService.update(
                 courseRecordDto, courseService.findById(courseId).get()
         ));
