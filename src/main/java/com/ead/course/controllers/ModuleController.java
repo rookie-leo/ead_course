@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @Log4j2
 @RestController
 public class ModuleController {
@@ -44,9 +47,14 @@ public class ModuleController {
             SpecificationTemplate.ModuleSpec spec,
             Pageable pageable
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(
-                moduleService.findAllModulesIntoCourse(SpecificationTemplate.moduleCourseId(courseId).and(spec), pageable)
-        );
+        Page<ModuleModel> moduleModelPage = moduleService.findAllModulesIntoCourse(SpecificationTemplate.moduleCourseId(courseId).and(spec), pageable);
+
+        if (!moduleModelPage.isEmpty()) {
+            moduleModelPage.forEach(module ->
+                    module.add(linkTo(methodOn(ModuleController.class).getOneModel(courseId, module.getModuleId())).withSelfRel()));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(moduleModelPage);
     }
 
     @GetMapping("/courses/{courseId}/modules/{moduleId}")
