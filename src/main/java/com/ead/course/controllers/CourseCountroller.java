@@ -41,9 +41,13 @@ public class CourseCountroller {
 
     @GetMapping
     public ResponseEntity<Page<CourseModel>> getAllCourses(
-            SpecificationTemplate.CourseSpec spec, Pageable pageable
+            SpecificationTemplate.CourseSpec spec,
+            Pageable pageable,
+            @RequestParam(required = false) UUID userId
     ) {
-        Page<CourseModel> courseModelPage = courseService.findAll(spec, pageable);
+        Page<CourseModel> courseModelPage = (userId != null)
+                ? courseService.findAll(SpecificationTemplate.courseUserId(userId).and(spec), pageable)
+                : courseService.findAll(spec, pageable);
 
         if (!courseModelPage.isEmpty()) {
             courseModelPage.forEach(course ->
