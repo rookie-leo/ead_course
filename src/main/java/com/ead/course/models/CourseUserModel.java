@@ -3,12 +3,14 @@ package com.ead.course.models;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.UUID;
 
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name = "TB_COURSES_USERS")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CourseUserModel implements Serializable {
@@ -23,4 +25,10 @@ public class CourseUserModel implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private CourseModel course;
+
+    public CourseUserModel(UUID id, UUID userId, CourseModel courseModel) {
+        this.id = id;
+        this.userId = userId;
+        this.course = courseModel;
+    }
 }
