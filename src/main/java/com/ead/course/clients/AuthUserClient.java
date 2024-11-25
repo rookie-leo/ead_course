@@ -1,5 +1,6 @@
 package com.ead.course.clients;
 
+import com.ead.course.dtos.CourseUserRecordDto;
 import com.ead.course.dtos.ResponsePageDto;
 import com.ead.course.dtos.UserRecordDto;
 import com.ead.course.exceptions.NotFoundException;
@@ -8,12 +9,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
 import java.util.UUID;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Log4j2
 @Component
@@ -58,5 +62,24 @@ public class AuthUserClient {
                     throw new NotFoundException("User not found!");
                 }))
                 .toEntity(UserRecordDto.class);
+    }
+
+    public void postSubscriptionUserInCourse(UUID courseId, UUID userId) {
+        String url = baseUrlAuthuser + "/users/" + userId + "/courses/subscription";
+        log.debug("POST Request to URL: {}", url);
+
+        try {
+            var courseUserRecordDto = new CourseUserRecordDto(courseId, userId);
+
+            restClient.post()
+                    .uri(url)
+                    .contentType(APPLICATION_JSON)
+                    .body(courseUserRecordDto)
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (RestClientException ex) {
+            log.error("Error Request POST RestClient with cause: {}", ex.getMessage());
+            throw new RuntimeException("Error Request POST RestClient", ex);
+        }
     }
 }
