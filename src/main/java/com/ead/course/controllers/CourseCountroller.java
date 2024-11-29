@@ -4,12 +4,14 @@ import com.ead.course.dtos.CourseRecordDto;
 import com.ead.course.models.CourseModel;
 import com.ead.course.services.CourseService;
 import com.ead.course.specifications.SpecificationTemplate;
+import com.ead.course.validations.CourseValidator;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -23,27 +25,36 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class CourseCountroller {
 
     final CourseService courseService;
+    final CourseValidator courseValidator;
 
-    public CourseCountroller(CourseService courseService) {
+    public CourseCountroller(CourseService courseService, CourseValidator courseValidator) {
         this.courseService = courseService;
+        this.courseValidator = courseValidator;
     }
 
     @PostMapping
-    public ResponseEntity<Object> saveCourse(@RequestBody @Valid CourseRecordDto courseRecordDto) {
+    public ResponseEntity<Object> saveCourse(
+            @RequestBody @Valid CourseRecordDto courseRecordDto,
+            Errors errors
+            ) {
         log.debug("POST saveCourse courseRecordDto: {}", courseRecordDto);
-        if (courseService.existsByName(courseRecordDto.name())) {
-            log.warn("Course Name is Already Taken: {}", courseRecordDto.name());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Course Name is Already Taken!");
-        }
+        courseValidator.validate(courseRecordDto, errors);
+
+        if (errors.hasErrors())
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors.getAllErrors());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(courseService.save(courseRecordDto));
     }
 
     @GetMapping
     public ResponseEntity<Page<CourseModel>> getAllCourses(
-            SpecificationTemplate.CourseSpec spec, Pageable pageable
+            SpecificationTemplate.CourseSpec spec,
+            Pageable pageable,
+            @RequestParam(required = false) UUID userId
     ) {
-        Page<CourseModel> courseModelPage = courseService.findAll(spec, pageable);
+        Page<CourseModel> courseModelPage = (userId != null)
+                ? courseService.findAll(SpecificationTemplate.courseUserId(userId).and(spec), pageable)
+                : courseService.findAll(spec, pageable);
 
         if (!courseModelPage.isEmpty()) {
             courseModelPage.forEach(course ->
