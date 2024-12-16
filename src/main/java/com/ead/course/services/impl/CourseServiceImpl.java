@@ -5,6 +5,7 @@ import com.ead.course.exceptions.NotFoundException;
 import com.ead.course.models.CourseModel;
 import com.ead.course.models.LessonModel;
 import com.ead.course.models.ModuleModel;
+import com.ead.course.models.UserModel;
 import com.ead.course.repositories.CourseRepository;
 import com.ead.course.repositories.LessonRepository;
 import com.ead.course.repositories.ModuleRepository;
@@ -92,5 +93,16 @@ public class CourseServiceImpl implements CourseService {
         courseModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
 
         return courseRepository.save(courseModel);
+    }
+
+    @Override
+    public boolean existsByCourseAndUser(UUID courseId, UUID userId) {
+        return courseRepository.existsByCourseAndUser(courseId, userId);
+    }
+
+    @Transactional
+    @Override
+    public void saveSubscriptionUserInCourse(CourseModel courseModel, UserModel userModel) {
+        courseRepository.saveCourseUser(courseModel.getCourseId(), userModel.getUserId());
     }
 }

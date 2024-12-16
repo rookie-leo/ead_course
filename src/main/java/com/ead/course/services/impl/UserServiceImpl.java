@@ -1,5 +1,6 @@
 package com.ead.course.services.impl;
 
+import com.ead.course.exceptions.NotFoundException;
 import com.ead.course.models.UserModel;
 import com.ead.course.repositories.UserRepository;
 import com.ead.course.services.UserService;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -34,5 +36,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(UUID userId) {
         userRepository.deleteById(userId);
+    }
+
+    @Override
+    public Optional<UserModel> findById(UUID userId) {
+        Optional<UserModel> userModelOptional = userRepository.findById(userId);
+        if (userModelOptional.isEmpty()) throw new NotFoundException("User not found!");
+
+        return userModelOptional;
     }
 }
