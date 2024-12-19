@@ -53,6 +53,7 @@ public class CourseServiceImpl implements CourseService {
             moduleRepository.deleteAll(modules);
         }
 
+        courseRepository.deleteCourseUserByCouse(courseModel.getCourseId());
         courseRepository.delete(courseModel);
     }
 
