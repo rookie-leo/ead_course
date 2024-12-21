@@ -7,26 +7,34 @@ spring:
   application:
     name: ead-course-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/ead-course
+    url: jdbc:postgresql://localhost:5432/ead-course-v2
     username: postgres
     password: admin
   jpa:
     hibernate:
       ddl-auto: update
-      dialect: org.hibernate.dialect.PostgreSQLDialect
-      jdbc:
-        lob.non-contextual-creation: true
+    show-sql: true
     properties:
       hibernate:
-        show_sql: true
+        jdbc:
+          lob:
+            non-contextual-creation: true
   output:
     ansi:
       enabled: Always
+  rabbitmq:
+    addresses: amqps://fyjxcxnd:iNDNc7vrsiFS2jV46ff1CIuteTJ-jwbN@shark.rmq.cloudamqp.com/fyjxcxnd
 
 ead:
   api:
     url:
       authuser: 'http://ead-authuser-service/ead-authuser'
+  broker:
+    exchange:
+      userEventExchange: ead.userevent
+    queue:
+      userEventQueue:
+        name: ead.userevent.ms.course
 
 logging:
   level:
