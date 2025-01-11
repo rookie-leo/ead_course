@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -30,6 +31,7 @@ public class ModuleController {
         this.courseService = courseService;
     }
 
+    @PreAuthorize("hasAnyRole('INSTRUCTOR')")
     @PostMapping("/courses/{courseId}/modules")
     public ResponseEntity<Object> saveModule(
             @PathVariable(value = "courseId") UUID courseId,
@@ -41,6 +43,7 @@ public class ModuleController {
         );
     }
 
+    @PreAuthorize("hasAnyRole('USER')")
     @GetMapping("/courses/{courseId}/modules")
     public ResponseEntity<Page<ModuleModel>> getAllModels(
             @PathVariable(value = "courseId") UUID courseId,
@@ -57,6 +60,7 @@ public class ModuleController {
         return ResponseEntity.status(HttpStatus.OK).body(moduleModelPage);
     }
 
+    @PreAuthorize("hasAnyRole('USER')")
     @GetMapping("/courses/{courseId}/modules/{moduleId}")
     public ResponseEntity<Object> getOneModel(
             @PathVariable(value = "courseId") UUID courseId,
@@ -65,6 +69,7 @@ public class ModuleController {
         return ResponseEntity.status(HttpStatus.OK).body(moduleService.findModuleIntoCourse(courseId, moduleId));
     }
 
+    @PreAuthorize("hasAnyRole('INSTRUCTOR')")
     @DeleteMapping("/courses/{courseId}/modules/{moduleId}")
     public ResponseEntity<Object> deleteModule(
             @PathVariable("courseId") UUID courseId,
@@ -75,6 +80,7 @@ public class ModuleController {
         return ResponseEntity.status(HttpStatus.OK).body("Module deleted successfully");
     }
 
+    @PreAuthorize("hasAnyRole('INSTRUCTOR')")
     @PutMapping("/courses/{courseId}/modules/{moduleId}")
     public ResponseEntity<Object> updateModule(
             @PathVariable("courseId") UUID courseId,
