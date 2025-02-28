@@ -43,7 +43,7 @@ public class LessonController {
         );
     }
 
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasAnyRole('STUDENT')")
     @GetMapping("/modules/{moduleId}/lessons")
     public ResponseEntity<Page<LessonModel>> getAllLessons(
             @PathVariable(value = "moduleId") UUID moduleId,
@@ -59,7 +59,7 @@ public class LessonController {
         return ResponseEntity.status(HttpStatus.OK).body(lessonModelPage);
     }
 
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasAnyRole('STUDENT')")
     @GetMapping("/modules/{moduleId}/lessons/{lessonId}")
     public ResponseEntity<Object> getOneLesson(
             @PathVariable(value = "moduleId") UUID moduleId,

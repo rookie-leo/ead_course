@@ -43,7 +43,7 @@ public class ModuleController {
         );
     }
 
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasAnyRole('STUDENT')")
     @GetMapping("/courses/{courseId}/modules")
     public ResponseEntity<Page<ModuleModel>> getAllModels(
             @PathVariable(value = "courseId") UUID courseId,
@@ -60,7 +60,7 @@ public class ModuleController {
         return ResponseEntity.status(HttpStatus.OK).body(moduleModelPage);
     }
 
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasAnyRole('STUDENT')")
     @GetMapping("/courses/{courseId}/modules/{moduleId}")
     public ResponseEntity<Object> getOneModel(
             @PathVariable(value = "courseId") UUID courseId,

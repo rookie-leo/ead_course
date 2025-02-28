@@ -48,7 +48,7 @@ public class CourseCountroller {
         return ResponseEntity.status(HttpStatus.CREATED).body(courseService.save(courseRecordDto));
     }
 
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasAnyRole('STUDENT')")
     @GetMapping
     public ResponseEntity<Page<CourseModel>> getAllCourses(
             SpecificationTemplate.CourseSpec spec,
@@ -68,7 +68,7 @@ public class CourseCountroller {
         return ResponseEntity.status(HttpStatus.OK).body(courseModelPage);
     }
 
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasAnyRole('STUDENT')")
     @GetMapping("/{courseId}")
     public ResponseEntity<Object> getOneCourse(@PathVariable("courseId") UUID courseId) {
         return ResponseEntity.status(HttpStatus.OK).body(courseService.findById(courseId).get());
